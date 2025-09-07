@@ -18,22 +18,10 @@
     "tabs": [
       {
       "tab": "API Refy",
-      "groups": [
-        {
-          "group": "Users",
           "openapi": {
             "source": "openapi.json",
-            "directory": "api-reference"
+            "directory": "autogen"
           }
-        },
-        {
-          "group": "Admin",
-          "openapi": {
-            "source": "openapi.json",
-            "directory": "api-reference"
-          }
-        }
-      ]
       },
       {
         "tab": "Guides",
