@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect, useId } from "react";
+import { useMemo, useState, useEffect } from "react";
 
 export const JsonViewer = ({ json, collapsedAt = 1 }) => {
   const value = useMemo(() => {
@@ -32,6 +32,8 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
     next.has(p) ? next.delete(p) : next.add(p);
     return next;
   });
+
+  const idForPath = (p) => `jv_${p.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
 
   const Row = ({ indent, onClick, children }) => (
     <div
@@ -74,7 +76,9 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
 
     const label = Array.isArray(v) ? `Array(${entries.length})` : `Object(${entries.length})`;
     const isOpen = open.has(path);
-    const btnId = useId();
+
+    const btnId = `${idForPath(path)}_btn`;
+    const regionId = `${idForPath(path)}_region`;
 
     return (
       <div>
@@ -88,7 +92,7 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
             onClick={(e) => { e.stopPropagation(); toggle(path); }}
             aria-label={isOpen ? "Collapse" : "Expand"}
             aria-expanded={isOpen}
-            aria-controls={`${btnId}-region`}
+            aria-controls={regionId}
             style={{
               fontFamily: "inherit",
               fontSize: 14,
@@ -106,7 +110,7 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
         </Row>
 
         {isOpen && (
-          <div id={`${btnId}-region`} role="region" aria-labelledby={btnId}>
+          <div id={regionId} role="region" aria-labelledby={btnId}>
             {entries.map(([k, vv]) => {
               const childPath = `${path}.${k}`;
               const childName = k;
