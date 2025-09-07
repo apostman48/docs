@@ -19,7 +19,7 @@
       {
       "tab": "API Refy",
           "openapi": {
-            "source": "autogen/openapi.yaml",
+            "source": "autogen/repliers.json",
             "directory": "autogen"
           }
       },
