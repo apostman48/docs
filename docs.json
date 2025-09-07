@@ -16,6 +16,23 @@
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
+    {
+      "tab": "API Refy",
+      "groups": [
+        {
+          "group": "Users",
+          "openapi": {
+            "source": "openapi.json",
+            "directory": "api-reference"
+          }
+        },
+        {
+          "group": "Admin",
+          "openapi": {
+            "source": "repliers.json",
+            "directory": "autogen"
+          }
+      },
       {
         "tab": "Guides",
         "groups": [
