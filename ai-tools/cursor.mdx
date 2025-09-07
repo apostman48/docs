@@ -19,6 +19,18 @@ Create project rules that all team members can use. In your documentation reposi
 mkdir -p .cursor
 ```
 
+import { JsonViewer } from "/snippets/json-viewer.jsx";
+
+<JsonViewer data={{
+  id: 42,
+  name: "Mintlify Cloud",
+  flags: { aiNative: true, mdx: true },
+  items: [1, 2, 3, { nested: "ok" }]
+}} />
+
+// or: <JsonViewer json='{"hello":"world"}' />
+
+
 Create `.cursor/rules.md`:
 
 ````markdown
