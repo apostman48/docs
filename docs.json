@@ -16,7 +16,7 @@
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
-    {
+      {
       "tab": "API Refy",
       "groups": [
         {
@@ -32,6 +32,8 @@
             "source": "repliers.json",
             "directory": "autogen"
           }
+        }
+      ]
       },
       {
         "tab": "Guides",
