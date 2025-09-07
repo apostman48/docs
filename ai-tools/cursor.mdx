@@ -3,35 +3,22 @@ title: JSON Viewer — Full Demo
 description: Interactive, collapsible JSON viewer using a Mintlify snippet.
 ---
 
-import JsonViewer, {
-  demoObject,
-  demoJson,
-  demoLargeArray,
-  demoInvalidJson
-} from "/snippets/json-viewer.jsx";
+import JsonViewer, { DEMO_JSON } from "/snippets/json-viewer.jsx";
 
 # JSON Viewer Demo
 
----
-
-## 1) Object via `data`
-
-<JsonViewer data={demoObject} collapsedAt={1} />
+<JsonViewer json={DEMO_JSON} collapsedAt={1} />
 
 ---
 
-## 2) JSON string via `json` (fully expanded)
+## Fully expanded example
 
-<JsonViewer json={demoJson} collapsedAt={0} />
-
----
-
-## 3) Large array (deterministic values)
-
-<JsonViewer data={demoLargeArray} collapsedAt={1} />
-
----
-
-## 4) Invalid JSON handling
-
-<JsonViewer json={demoInvalidJson} />
+<JsonViewer json={`{
+  "status": "ok",
+  "version": "2.1.0",
+  "endpoints": [
+    {"path": "/v2/users", "method": "GET"},
+    {"path": "/v2/projects/:id", "method": "PATCH"}
+  ],
+  "limits": {"rps": 15, "burst": 60}
+}`} collapsedAt={0} />
