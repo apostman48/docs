@@ -1,36 +1,27 @@
 "use client";
 
-// JSX snippet using ONLY arrow functions, per Mintlify docs.
-// Import with:  import { JsonViewer } from "/snippets/json-viewer.jsx";
-// Use with:     <JsonViewer json={`{ "hello": "world" }`} collapsedAt={1} />
-
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useId } from "react";
 
 export const JsonViewer = ({ json, collapsedAt = 1 }) => {
-  // Parse only JSON strings to avoid MDX object-prop serialization issues
   const value = useMemo(() => {
     if (typeof json === "string") {
       try { return JSON.parse(json); } catch { return { error: "Invalid JSON string" }; }
     }
+    if (json && typeof json === "object") return json;
     return { error: "No JSON provided" };
   }, [json]);
 
-  // Expanded paths (e.g., "$root.users.0")
   const [open, setOpen] = useState(() => new Set());
+  const [selected, setSelected] = useState({ name: null, path: null });
 
-  // Seed expansion based on `collapsedAt`
   useEffect(() => {
     const next = new Set();
     const seed = (v, path = "$root", depth = 0) => {
       const isObj = v !== null && typeof v === "object";
       if (!isObj) return;
       if (depth < collapsedAt) next.add(path);
-      const entries = Array.isArray(v) ? v : Object(v);
-      const keys = Array.isArray(v) ? [...entries.keys()] : Object.keys(entries);
-      for (const k of keys) {
-        const child = Array.isArray(v) ? entries[k] : entries[k];
-        seed(child, `${path}.${k}`, depth + 1);
-      }
+      const entries = Array.isArray(v) ? v.map((vv, i) => [String(i), vv]) : Object.entries(v);
+      for (const [k, child] of entries) seed(child, `${path}.${k}`, depth + 1);
     };
     seed(value, "$root", 0);
     setOpen(next);
@@ -42,34 +33,62 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
     return next;
   });
 
-  const Row = ({ indent, children }) => (
-    <div style={{ paddingLeft: indent * 16, whiteSpace: "pre-wrap" }}>{children}</div>
+  const Row = ({ indent, onClick, children }) => (
+    <div
+      onClick={onClick}
+      style={{
+        paddingLeft: indent * 16,
+        whiteSpace: "pre-wrap",
+        cursor: onClick ? "pointer" : "default",
+        userSelect: "none"
+      }}
+    >
+      {children}
+    </div>
   );
+
+  const TypeTag = ({ t }) => <span style={{ opacity: 0.6 }}>({t})</span>;
 
   const primitiveRender = (v) => {
     const t = v === null ? "null" : typeof v;
     const display = v === null ? "null" : t === "string" ? `"${v}"` : String(v);
-    return <span>{display} <span style={{ opacity: 0.6 }}>({t})</span></span>;
+    return <span>{display} <TypeTag t={t} /></span>;
   };
 
-  const render = (v, path = "$root", depth = 0) => {
+  const render = (v, path = "$root", depth = 0, itemName = "$root") => {
     const isObj = v !== null && typeof v === "object";
-    if (!isObj) return <Row indent={depth}>{primitiveRender(v)}</Row>;
+    if (!isObj) {
+      return (
+        <Row
+          indent={depth}
+          onClick={(e) => { e.stopPropagation(); setSelected({ name: itemName, path }); }}
+        >
+          {primitiveRender(v)}
+        </Row>
+      );
+    }
 
     const entries = Array.isArray(v)
-      ? Array.from(v, (vv, i) => [String(i), vv])
+      ? v.map((vv, i) => [String(i), vv])
       : Object.entries(v);
 
     const label = Array.isArray(v) ? `Array(${entries.length})` : `Object(${entries.length})`;
     const isOpen = open.has(path);
+    const btnId = useId();
 
     return (
       <div>
-        <Row indent={depth}>
+        <Row
+          indent={depth}
+          onClick={(e) => { e.stopPropagation(); setSelected({ name: itemName, path }); }}
+        >
           <button
             type="button"
-            onClick={() => toggle(path)}
+            id={btnId}
+            onClick={(e) => { e.stopPropagation(); toggle(path); }}
             aria-label={isOpen ? "Collapse" : "Expand"}
+            aria-expanded={isOpen}
+            aria-controls={`${btnId}-region`}
             style={{
               fontFamily: "inherit",
               fontSize: 14,
@@ -86,16 +105,31 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
           <span style={{ fontWeight: 600 }}>{label}</span>
         </Row>
 
-        {isOpen && entries.map(([k, vv]) => (
-          <div key={k}>
-            <Row indent={depth + 1}>
-              <span style={{ fontWeight: 600 }}>{k}: </span>
-              {vv !== null && typeof vv === "object"
-                ? render(vv, `${path}.${k}`, depth + 1)
-                : primitiveRender(vv)}
-            </Row>
+        {isOpen && (
+          <div id={`${btnId}-region`} role="region" aria-labelledby={btnId}>
+            {entries.map(([k, vv]) => {
+              const childPath = `${path}.${k}`;
+              const childName = k;
+              const isChildObj = vv !== null && typeof vv === "object";
+
+              return (
+                <div key={k}>
+                  <Row
+                    indent={depth + 1}
+                    onClick={(e) => { e.stopPropagation(); setSelected({ name: childName, path: childPath }); }}
+                  >
+                    <span style={{ fontWeight: 600 }}>
+                      {Array.isArray(v) ? k : `"${k}"`}:
+                    </span>{" "}
+                    {isChildObj
+                      ? render(vv, childPath, depth + 1, childName)
+                      : primitiveRender(vv)}
+                  </Row>
+                </div>
+              );
+            })}
           </div>
-        ))}
+        )}
       </div>
     );
   };
@@ -106,7 +140,28 @@ export const JsonViewer = ({ json, collapsedAt = 1 }) => {
       fontSize: 14,
       lineHeight: 1.5
     }}>
-      {render(value, "$root", 0)}
+      <div
+        style={{
+          position: "sticky",
+          top: 0,
+          background: "var(--mintlify-background, #fff)",
+          padding: "6px 0",
+          marginBottom: 8,
+          borderBottom: "1px solid rgba(0,0,0,0.08)"
+        }}
+      >
+        <strong>Clicked item:</strong>{" "}
+        {selected.name ? (
+          <>
+            <span style={{ fontWeight: 600 }}>{selected.name}</span>{" "}
+            <span style={{ opacity: 0.6 }}>[{selected.path}]</span>
+          </>
+        ) : (
+          <span style={{ opacity: 0.6 }}>—</span>
+        )}
+      </div>
+
+      {render(value, "$root", 0, "$root")}
     </div>
   );
 };
