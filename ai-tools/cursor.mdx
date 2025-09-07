@@ -7,6 +7,8 @@ import JsonViewer from "/snippets/json-viewer.jsx";
 
 # JSON Viewer Demo
 
+This page demonstrates the `JsonViewer` snippet with objects, JSON strings, arrays, and invalid JSON.
+
 ---
 
 ## 1) Object via `data`
@@ -51,12 +53,12 @@ import JsonViewer from "/snippets/json-viewer.jsx";
 <JsonViewer
   collapsedAt={1}
   data={{
-    results: Array.from({ length: 20 }).map((_, i) => ({
+    results: Array.from({ length: 10 }).map((_, i) => ({
       id: i + 1,
       ok: (i % 3) !== 0,
       score: ((i * 137) % 1000) / 10
     })),
-    paging: { page: 1, pageSize: 20, total: 5000 }
+    paging: { page: 1, pageSize: 10, total: 5000 }
   }}
 />
 
