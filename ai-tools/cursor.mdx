@@ -7,104 +7,61 @@ import { JsonViewer } from "/snippets/json-viewer.jsx";
 
 # JSON Viewer Demo
 
-This page showcases the `JsonViewer` snippet in a few common scenarios:
-- A realistic API response (deeply nested, arrays, mixed types)
-- Passing a raw JSON string
-- Controlling how expanded it is by default with `collapsedAt`
-
 ---
 
-## 1) Realistic API response (object via `data`)
+## 1) Object via `data`
 
 <JsonViewer
-  collapsedAt={0}
+  collapsedAt={1}
   data={{
-    meta: {
-      requestId: "req_9c1e2c0f",
-      receivedAt: "2025-09-07T10:31:00Z",
-      source: "internal:example",
-      flags: { cached: true, compressed: false, experimental: ["v2-schema"] }
-    },
+    meta: { requestId: "req_9c1e2c0f", receivedAt: "2025-09-07T10:31:00Z" },
     user: {
       id: 123456,
       name: { first: "Ada", last: "Lovelace" },
-      email: "ada@example.com",
       roles: ["admin", "analyst"],
-      features: {
-        darkMode: true,
-        betaAccess: false,
-        quotas: { monthly: 25000, used: 18234, remaining: 6766 }
-      },
-      profile: {
-        bio: "Mathematician / first computer programmer",
-        socials: [{ type: "x", handle: "ada" }, { type: "github", handle: "ada-l" }],
-        createdAt: "2024-01-15T08:20:44Z",
-        lastLoginAt: null
-      }
+      profile: { bio: "Mathematician", lastLoginAt: null }
     },
     projects: [
-      {
-        id: "prj_1",
-        name: "Analytical Engine",
-        tags: ["history", "mechanical", "theory"],
-        stats: { issuesOpen: 12, issuesClosed: 45, contributors: 8 }
-      },
-      {
-        id: "prj_2",
-        name: "Notes on Babbage",
-        tags: ["paper", "translation"],
-        stats: { issuesOpen: 0, issuesClosed: 3, contributors: 2 }
-      }
-    ],
-    analytics: {
-      last7d: [121, 98, 143, 87, 201, 176, 154],
-      geo: { US: 0.42, GB: 0.25, DE: 0.11, RO: 0.07, OTHER: 0.15 }
-    }
+      { id: "prj_1", name: "Analytical Engine", stats: { issuesOpen: 12 } },
+      { id: "prj_2", name: "Notes on Babbage", stats: { issuesOpen: 0 } }
+    ]
   }}
 />
 
-### Sample payload (copy/paste)
-```json
-{
-  "meta": {
-    "requestId": "req_9c1e2c0f",
-    "receivedAt": "2025-09-07T10:31:00Z",
-    "source": "internal:example",
-    "flags": { "cached": true, "compressed": false, "experimental": ["v2-schema"] }
-  },
-  "user": {
-    "id": 123456,
-    "name": { "first": "Ada", "last": "Lovelace" },
-    "email": "ada@example.com",
-    "roles": ["admin", "analyst"],
-    "features": {
-      "darkMode": true,
-      "betaAccess": false,
-      "quotas": { "monthly": 25000, "used": 18234, "remaining": 6766 }
-    },
-    "profile": {
-      "bio": "Mathematician / first computer programmer",
-      "socials": [{ "type": "x", "handle": "ada" }, { "type": "github", "handle": "ada-l" }],
-      "createdAt": "2024-01-15T08:20:44Z",
-      "lastLoginAt": null
-    }
-  },
-  "projects": [
-    {
-      "id": "prj_1",
-      "name": "Analytical Engine",
-      "tags": ["history", "mechanical", "theory"],
-      "stats": { "issuesOpen": 12, "issuesClosed": 45, "contributors": 8 }
-    },
-    {
-      "id": "prj_2",
-      "name": "Notes on Babbage",
-      "tags": ["paper", "translation"],
-      "stats": { "issuesOpen": 0, "issuesClosed": 3, "contributors": 2 }
-    }
-  ],
-  "analytics": {
-    "last7d": [121, 98, 143, 87, 201, 176, 154],
-    "geo": { "US": 0.42, "GB": 0.25, "DE": 0.11, "RO": 0.07, "OTHER": 0.15 }
-  }
-}
+---
+
+## 2) JSON string via `json` (fully expanded)
+
+<JsonViewer
+  collapsedAt={0}
+  json={`{
+    "status": "ok",
+    "version": "2.1.0",
+    "endpoints": [
+      {"path": "/v2/users", "method": "GET"},
+      {"path": "/v2/projects/:id", "method": "PATCH"}
+    ]
+  }`}
+/>
+
+---
+
+## 3) Large array (deterministic values)
+
+<JsonViewer
+  collapsedAt={1}
+  data={{
+    results: Array.from({ length: 20 }).map((_, i) => ({
+      id: i + 1,
+      ok: (i % 3) !== 0,
+      score: ((i * 137) % 1000) / 10
+    })),
+    paging: { page: 1, pageSize: 20, total: 5000 }
+  }}
+/>
+
+---
+
+## 4) Invalid JSON handling
+
+<JsonViewer json={`{ "oops": true, trailing: }`} />
