@@ -1,40 +1,216 @@
 ---
-title: JSON Viewer — Full Demo
-description: Interactive, collapsible JSON viewer using a Mintlify snippet.
+title: JSON Item Counter Demo
+description: Examples of using the JSON Item Counter snippet
 ---
 
-import JsonViewer from "/snippets/json-viewer.jsx"
+# JSON Item Counter Examples
 
-# JSON Viewer Demo
+This page demonstrates how to use the JSON Item Counter snippet to display JSON structures with item counts.
 
----
+## Simple API Response
 
-## 1) Object-like data (collapsed at depth 1)
+<JsonItemCounter 
+  title="User API Response"
+  data={{
+    "users": [
+      {
+        "id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "profile": {
+          "age": 30,
+          "location": "New York",
+          "interests": ["coding", "reading", "hiking"]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Jane Smith", 
+        "email": "jane@example.com",
+        "profile": {
+          "age": 28,
+          "location": "San Francisco",
+          "interests": ["design", "photography"]
+        }
+      }
+    ],
+    "metadata": {
+      "total": 2,
+      "page": 1,
+      "limit": 10
+    }
+  }}
+/>
 
-<JsonViewer json={`{
-  "meta": { "requestId": "req_9c1e2c0f", "receivedAt": "2025-09-07T10:31:00Z" },
-  "user": {
-    "id": 123456,
-    "name": { "first": "Ada", "last": "Lovelace" },
-    "roles": ["admin", "analyst"],
-    "profile": { "bio": "Mathematician", "lastLoginAt": null }
-  },
-  "projects": [
-    { "id": "prj_1", "name": "Analytical Engine", "stats": { "issuesOpen": 12 } },
-    { "id": "prj_2", "name": "Notes on Babbage", "stats": { "issuesOpen": 0 } }
-  ]
-}`} collapsedAt={1} />
+## E-commerce Product Structure
 
----
+<JsonItemCounter 
+  title="Product Catalog"
+  data={{
+    "categories": [
+      {
+        "id": "electronics",
+        "name": "Electronics",
+        "products": [
+          {
+            "id": "laptop-001",
+            "name": "Gaming Laptop",
+            "price": 1299.99,
+            "specifications": {
+              "cpu": "Intel i7",
+              "ram": "16GB",
+              "storage": "512GB SSD",
+              "graphics": "RTX 3060"
+            },
+            "reviews": [
+              {
+                "rating": 5,
+                "comment": "Excellent performance"
+              },
+              {
+                "rating": 4,
+                "comment": "Great value"
+              }
+            ],
+            "tags": ["gaming", "portable", "high-performance"]
+          }
+        ]
+      }
+    ],
+    "filters": {
+      "price_range": {
+        "min": 0,
+        "max": 5000
+      },
+      "brands": ["Apple", "Samsung", "Dell", "HP"],
+      "availability": ["in_stock", "out_of_stock"]
+    }
+  }}
+/>
 
-## 2) Fully expanded example
+## Configuration File
 
-<JsonViewer json={`{
-  "status": "ok",
-  "version": "2.1.0",
-  "endpoints": [
-    {"path": "/v2/users", "method": "GET"},
-    {"path": "/v2/projects/:id", "method": "PATCH"}
-  ],
-  "limits": {"rps": 15, "burst": 60}
-}`} collapsedAt={0} />
+<JsonItemCounter 
+  title="App Configuration"
+  data={{
+    "database": {
+      "host": "localhost",
+      "port": 5432,
+      "name": "myapp_db",
+      "options": {
+        "ssl": true,
+        "pool_size": 10,
+        "timeout": 30000
+      }
+    },
+    "api": {
+      "version": "v1",
+      "base_url": "https://api.example.com",
+      "endpoints": ["/users", "/products", "/orders"],
+      "rate_limiting": {
+        "enabled": true,
+        "requests_per_hour": 1000
+      }
+    },
+    "features": {
+      "authentication": ["oauth", "jwt", "api_key"],
+      "notifications": {
+        "email": true,
+        "push": false
+      }
+    }
+  }}
+/>
+
+## Analytics Data
+
+<JsonItemCounter 
+  title="Website Analytics"
+  data={{
+    "overview": {
+      "total_visits": 15420,
+      "unique_visitors": 12350,
+      "bounce_rate": 0.23,
+      "avg_session_duration": 145.5
+    },
+    "traffic_sources": [
+      {
+        "source": "organic",
+        "visits": 8230,
+        "percentage": 53.4
+      },
+      {
+        "source": "direct",
+        "visits": 4120,
+        "percentage": 26.7
+      },
+      {
+        "source": "social",
+        "visits": 2050,
+        "percentage": 13.3
+      },
+      {
+        "source": "referral",
+        "visits": 1020,
+        "percentage": 6.6
+      }
+    ],
+    "top_pages": [
+      {
+        "path": "/",
+        "views": 5420,
+        "unique_views": 4230
+      },
+      {
+        "path": "/products",
+        "views": 3210,
+        "unique_views": 2890
+      },
+      {
+        "path": "/about",
+        "views": 1850,
+        "unique_views": 1720
+      }
+    ],
+    "devices": {
+      "desktop": {
+        "visits": 9250,
+        "percentage": 60.0
+      },
+      "mobile": {
+        "visits": 4630,
+        "percentage": 30.0
+      },
+      "tablet": {
+        "visits": 1540,
+        "percentage": 10.0
+      }
+    }
+  }}
+/>
+
+## How to Use
+
+1. **Create the snippet**: Save the first file as `json-counter.mdx` in your `snippets` folder
+
+2. **Use in your docs**: Add the JsonItemCounter component to any MDX page:
+
+```jsx
+<JsonItemCounter 
+  title="Your Custom Title"
+  data={yourJsonObject}
+/>
+```
+
+## Features
+
+- **📊 Item Counts**: See how many items/properties each section contains
+- **🎯 Interactive**: Click to expand/collapse sections
+- **🎨 Color Coded**: 
+  - Orange badges for arrays
+  - Green badges for objects
+  - Different colors for different value types
+- **📱 Responsive**: Works on all screen sizes
+- **⚡ Smooth**: Animated transitions for better UX
+
+Perfect for API documentation, configuration examples, and any JSON data visualization!
