@@ -1,18 +1,42 @@
 ---
-title: JSON Item Counter Demo
-description: Examples of using the JSON Item Counter snippet
+title: JSON Viewer — Full Demo
+description: Interactive, collapsible JSON viewer using a Mintlify snippet.
 ---
 
-# JSON Item Counter Examples
+import { JsonViewer } from "/snippets/json-viewer.jsx";
 
-This page demonstrates how to use the JSON Item Counter snippet to display JSON structures with item counts.
+# JSON Viewer Demo
 
-## Simple API Response
+The examples below pass **JSON strings** (MDX-safe) into the snippet.
 
-<JsonItemCounter 
-  title="My API Response"
-  data={{
-    "users": [{"id": 1, "name": "John"}],
-    "total": 1
-  }}
-/>
+---
+
+## 1) Object-like data (collapsed at depth 1)
+
+<JsonViewer json={`{
+  "meta": { "requestId": "req_9c1e2c0f", "receivedAt": "2025-09-07T10:31:00Z" },
+  "user": {
+    "id": 123456,
+    "name": { "first": "Ada", "last": "Lovelace" },
+    "roles": ["admin", "analyst"],
+    "profile": { "bio": "Mathematician", "lastLoginAt": null }
+  },
+  "projects": [
+    { "id": "prj_1", "name": "Analytical Engine", "stats": { "issuesOpen": 12 } },
+    { "id": "prj_2", "name": "Notes on Babbage", "stats": { "issuesOpen": 0 } }
+  ]
+}`} collapsedAt={1} />
+
+---
+
+## 2) Fully expanded example
+
+<JsonViewer json={`{
+  "status": "ok",
+  "version": "2.1.0",
+  "endpoints": [
+    {"path": "/v2/users", "method": "GET"},
+    {"path": "/v2/projects/:id", "method": "PATCH"}
+  ],
+  "limits": {"rps": 15, "burst": 60}
+}`} collapsedAt={0} />
