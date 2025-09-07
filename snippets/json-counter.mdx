@@ -1,246 +1,128 @@
 ```jsx JsonItemCounter
-import React, { useState } from 'react';
-
 function JsonItemCounter({ data, title = "JSON Structure" }) {
-  const [collapsed, setCollapsed] = useState({});
-
-  const toggleCollapse = (path) => {
-    setCollapsed(prev => ({
-      ...prev,
-      [path]: !prev[path]
-    }));
-  };
+  if (!data || typeof data !== 'object') {
+    return (
+      <div style={{
+        border: '1px solid #ef4444',
+        borderRadius: '8px',
+        padding: '16px',
+        backgroundColor: '#fef2f2',
+        color: '#dc2626',
+        margin: '16px 0',
+        fontWeight: '500'
+      }}>
+        <strong>Error:</strong> Invalid JSON data provided
+      </div>
+    );
+  }
 
   const countItems = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.length;
-    }
-    if (obj && typeof obj === 'object') {
-      return Object.keys(obj).length;
-    }
+    if (Array.isArray(obj)) return obj.length;
+    if (obj && typeof obj === 'object') return Object.keys(obj).length;
     return 0;
   };
 
-  const renderValue = (value, key, path = '', level = 0) => {
-    const currentPath = path ? `${path}.${key}` : key;
-    const indent = level * 20;
+  const renderJsonTree = (obj, depth = 0) => {
+    const indent = depth * 20;
     
-    if (Array.isArray(value)) {
-      const itemCount = value.length;
-      const isCollapsed = collapsed[currentPath];
+    return Object.entries(obj).map(([key, value], index) => {
+      const isArray = Array.isArray(value);
+      const isObject = value && typeof value === 'object' && !isArray;
+      const isPrimitive = !isArray && !isObject;
       
       return (
-        <div key={currentPath} style={{ marginLeft: `${indent}px` }}>
-          <div 
-            onClick={() => toggleCollapse(currentPath)}
-            style={{ 
-              cursor: 'pointer', 
-              display: 'flex', 
+        <div key={`${key}-${index}`} style={{ marginLeft: `${indent}px`, marginBottom: '8px' }}>
+          {isPrimitive ? (
+            // Primitive value display
+            <div style={{
+              display: 'flex',
               alignItems: 'center',
               padding: '6px 12px',
-              borderRadius: '6px',
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              marginBottom: '4px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-            }}
-          >
-            <span style={{ 
-              marginRight: '8px',
-              transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s ease',
-              fontSize: '12px'
+              fontFamily: 'ui-monospace, SFMono-Regular, Monaco, Consolas, monospace',
+              fontSize: '13px',
+              backgroundColor: '#f9fafb',
+              borderRadius: '4px'
             }}>
-              ▼
-            </span>
-            <span style={{ 
-              color: '#2563eb',
-              fontWeight: '600',
-              fontFamily: 'monospace'
-            }}>
-              "{key}"
-            </span>
-            <span style={{ margin: '0 8px', color: '#6b7280' }}>:</span>
-            <span style={{ color: '#6b7280' }}>[</span>
-            <span style={{ 
-              backgroundColor: '#f59e0b',
-              color: 'white',
-              padding: '2px 8px',
-              borderRadius: '12px',
-              fontSize: '11px',
-              margin: '0 8px',
-              fontWeight: '600'
-            }}>
-              {itemCount} items
-            </span>
-            <span style={{ color: '#6b7280' }}>]</span>
-          </div>
-          
-          {!isCollapsed && (
-            <div style={{ 
-              borderLeft: '2px solid #e5e7eb',
-              marginLeft: '10px',
-              paddingLeft: '10px',
-              marginTop: '4px'
-            }}>
-              {value.map((item, index) => (
-                <div key={index}>
-                  {renderValue(item, index, currentPath, level + 1)}
-                </div>
-              ))}
+              <span style={{ color: '#1e40af', fontWeight: '600' }}>"{key}"</span>
+              <span style={{ margin: '0 8px', color: '#6b7280' }}>:</span>
+              <span style={{ 
+                color: typeof value === 'string' ? '#059669' : 
+                       typeof value === 'number' ? '#dc2626' : 
+                       typeof value === 'boolean' ? '#7c3aed' : '#6b7280'
+              }}>
+                {typeof value === 'string' ? `"${value}"` : String(value)}
+              </span>
+            </div>
+          ) : (
+            // Array or Object container
+            <div>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '8px 12px',
+                backgroundColor: '#f1f5f9',
+                border: '1px solid #cbd5e1',
+                borderRadius: '6px',
+                marginBottom: '6px',
+                fontFamily: 'ui-monospace, SFMono-Regular, Monaco, Consolas, monospace',
+                fontSize: '13px',
+                cursor: 'default'
+              }}>
+                <span style={{ color: '#1e40af', fontWeight: '700' }}>"{key}"</span>
+                <span style={{ margin: '0 8px', color: '#6b7280' }}>:</span>
+                <span style={{ color: '#6b7280', fontSize: '14px' }}>{isArray ? '[' : '{'}</span>
+                <span style={{
+                  backgroundColor: isArray ? '#f59e0b' : '#10b981',
+                  color: 'white',
+                  padding: '3px 8px',
+                  borderRadius: '12px',
+                  fontSize: '11px',
+                  margin: '0 8px',
+                  fontWeight: '600',
+                  minWidth: 'fit-content'
+                }}>
+                  {countItems(value)} {isArray ? 'items' : 'props'}
+                </span>
+                <span style={{ color: '#6b7280', fontSize: '14px' }}>{isArray ? ']' : '}'}</span>
+              </div>
+              
+              {/* Nested content */}
+              <div style={{
+                borderLeft: '2px solid #e2e8f0',
+                marginLeft: '12px',
+                paddingLeft: '12px',
+                paddingTop: '4px'
+              }}>
+                {renderJsonTree(value, depth + 1)}
+              </div>
             </div>
           )}
         </div>
       );
-    }
-    
-    if (value && typeof value === 'object') {
-      const itemCount = Object.keys(value).length;
-      const isCollapsed = collapsed[currentPath];
-      
-      return (
-        <div key={currentPath} style={{ marginLeft: `${indent}px` }}>
-          <div 
-            onClick={() => toggleCollapse(currentPath)}
-            style={{ 
-              cursor: 'pointer', 
-              display: 'flex', 
-              alignItems: 'center',
-              padding: '6px 12px',
-              borderRadius: '6px',
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              marginBottom: '4px',
-              border: '1px solid rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.08)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'rgba(0, 0, 0, 0.05)';
-            }}
-          >
-            <span style={{ 
-              marginRight: '8px',
-              transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0deg)',
-              transition: 'transform 0.2s ease',
-              fontSize: '12px'
-            }}>
-              ▼
-            </span>
-            <span style={{ 
-              color: '#2563eb',
-              fontWeight: '600',
-              fontFamily: 'monospace'
-            }}>
-              "{key}"
-            </span>
-            <span style={{ margin: '0 8px', color: '#6b7280' }}>:</span>
-            <span style={{ color: '#6b7280' }}>{"{"}</span>
-            <span style={{ 
-              backgroundColor: '#10b981',
-              color: 'white',
-              padding: '2px 8px',
-              borderRadius: '12px',
-              fontSize: '11px',
-              margin: '0 8px',
-              fontWeight: '600'
-            }}>
-              {itemCount} properties
-            </span>
-            <span style={{ color: '#6b7280' }}>{"}"}</span>
-          </div>
-          
-          {!isCollapsed && (
-            <div style={{ 
-              borderLeft: '2px solid #e5e7eb',
-              marginLeft: '10px',
-              paddingLeft: '10px',
-              marginTop: '4px'
-            }}>
-              {Object.entries(value).map(([k, v]) => (
-                renderValue(v, k, currentPath, level + 1)
-              ))}
-            </div>
-          )}
-        </div>
-      );
-    }
-    
-    // Primitive values
-    const getValueColor = (val) => {
-      if (typeof val === 'string') return '#10b981';
-      if (typeof val === 'number') return '#f59e0b';
-      if (typeof val === 'boolean') return '#8b5cf6';
-      return '#6b7280';
-    };
-    
-    const formatValue = (val) => {
-      if (typeof val === 'string') return `"${val}"`;
-      return String(val);
-    };
-    
-    return (
-      <div key={currentPath} style={{ 
-        marginLeft: `${indent}px`,
-        padding: '3px 12px',
-        marginBottom: '2px',
-        display: 'flex',
-        alignItems: 'center'
-      }}>
-        <span style={{ 
-          color: '#2563eb',
-          fontWeight: '600',
-          fontFamily: 'monospace'
-        }}>
-          "{key}"
-        </span>
-        <span style={{ margin: '0 8px', color: '#6b7280' }}>:</span>
-        <span style={{ 
-          color: getValueColor(value),
-          fontFamily: 'monospace'
-        }}>
-          {formatValue(value)}
-        </span>
-      </div>
-    );
+    });
   };
 
   return (
-    <div style={{ 
-      border: '1px solid #e5e7eb',
+    <div style={{
+      border: '1px solid #e2e8f0',
       borderRadius: '8px',
-      padding: '16px',
-      backgroundColor: '#fafafa',
-      fontFamily: 'monospace',
-      fontSize: '14px',
-      lineHeight: '1.5',
-      margin: '16px 0'
+      padding: '20px',
+      backgroundColor: '#ffffff',
+      margin: '20px 0',
+      boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
     }}>
-      <h4 style={{ 
+      <h4 style={{
         margin: '0 0 16px 0',
-        color: '#1f2937',
-        fontFamily: 'system-ui, sans-serif',
+        color: '#111827',
         fontSize: '18px',
-        fontWeight: '600'
+        fontWeight: '600',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
       }}>
         {title}
       </h4>
       
-      <div>
-        {typeof data === 'object' && data !== null ? (
-          Object.entries(data).map(([key, value]) => renderValue(value, key, '', 0))
-        ) : (
-          <div style={{ color: '#ef4444', fontWeight: '500' }}>
-            Invalid JSON data provided
-          </div>
-        )}
+      <div style={{ overflow: 'auto' }}>
+        {renderJsonTree(data)}
       </div>
     </div>
   );
