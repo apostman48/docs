@@ -29,8 +29,8 @@
         {
           "group": "Admin",
           "openapi": {
-            "source": "repliers.json",
-            "directory": "autogen"
+            "source": "openapi.json",
+            "directory": "api-reference"
           }
         }
       ]
