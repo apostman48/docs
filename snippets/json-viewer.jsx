@@ -1,9 +1,13 @@
 "use client";
 
+// JSX snippet using ONLY arrow functions, per Mintlify docs.
+// Import with:  import { JsonViewer } from "/snippets/json-viewer.jsx";
+// Use with:     <JsonViewer json={`{ "hello": "world" }`} collapsedAt={1} />
+
 import { useMemo, useState, useEffect } from "react";
 
-export default function JsonViewer({ json, collapsedAt = 1 }) {
-  // Only accept a JSON string to avoid MDX serialization issues
+export const JsonViewer = ({ json, collapsedAt = 1 }) => {
+  // Parse only JSON strings to avoid MDX object-prop serialization issues
   const value = useMemo(() => {
     if (typeof json === "string") {
       try { return JSON.parse(json); } catch { return { error: "Invalid JSON string" }; }
@@ -11,18 +15,23 @@ export default function JsonViewer({ json, collapsedAt = 1 }) {
     return { error: "No JSON provided" };
   }, [json]);
 
+  // Expanded paths (e.g., "$root.users.0")
   const [open, setOpen] = useState(() => new Set());
 
+  // Seed expansion based on `collapsedAt`
   useEffect(() => {
     const next = new Set();
-    function seed(v, path = "$root", depth = 0) {
+    const seed = (v, path = "$root", depth = 0) => {
       const isObj = v !== null && typeof v === "object";
       if (!isObj) return;
       if (depth < collapsedAt) next.add(path);
-      const obj = Array.isArray(v) ? v : Object(v);
-      const keys = Array.isArray(v) ? [...obj.keys()] : Object.keys(obj);
-      for (const k of keys) seed(Array.isArray(v) ? obj[k] : obj[k], `${path}.${k}`, depth + 1);
-    }
+      const entries = Array.isArray(v) ? v : Object(v);
+      const keys = Array.isArray(v) ? [...entries.keys()] : Object.keys(entries);
+      for (const k of keys) {
+        const child = Array.isArray(v) ? entries[k] : entries[k];
+        seed(child, `${path}.${k}`, depth + 1);
+      }
+    };
     seed(value, "$root", 0);
     setOpen(next);
   }, [value, collapsedAt]);
@@ -37,13 +46,15 @@ export default function JsonViewer({ json, collapsedAt = 1 }) {
     <div style={{ paddingLeft: indent * 16, whiteSpace: "pre-wrap" }}>{children}</div>
   );
 
-  function render(v, path = "$root", depth = 0) {
+  const primitiveRender = (v) => {
+    const t = v === null ? "null" : typeof v;
+    const display = v === null ? "null" : t === "string" ? `"${v}"` : String(v);
+    return <span>{display} <span style={{ opacity: 0.6 }}>({t})</span></span>;
+  };
+
+  const render = (v, path = "$root", depth = 0) => {
     const isObj = v !== null && typeof v === "object";
-    if (!isObj) {
-      const t = v === null ? "null" : typeof v;
-      const display = v === null ? "null" : t === "string" ? `"${v}"` : String(v);
-      return <Row indent={depth}>{display} <span style={{opacity:.6}}>({t})</span></Row>;
-    }
+    if (!isObj) return <Row indent={depth}>{primitiveRender(v)}</Row>;
 
     const entries = Array.isArray(v)
       ? Array.from(v, (vv, i) => [String(i), vv])
@@ -59,36 +70,43 @@ export default function JsonViewer({ json, collapsedAt = 1 }) {
             type="button"
             onClick={() => toggle(path)}
             aria-label={isOpen ? "Collapse" : "Expand"}
-            style={{ fontFamily:"inherit", fontSize:14, border:"none", background:"transparent", cursor:"pointer", padding:0, marginRight:6 }}
+            style={{
+              fontFamily: "inherit",
+              fontSize: 14,
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              padding: 0,
+              marginRight: 6,
+              lineHeight: 1
+            }}
           >
             {isOpen ? "▾" : "▸"}
           </button>
           <span style={{ fontWeight: 600 }}>{label}</span>
         </Row>
+
         {isOpen && entries.map(([k, vv]) => (
           <div key={k}>
             <Row indent={depth + 1}>
               <span style={{ fontWeight: 600 }}>{k}: </span>
               {vv !== null && typeof vv === "object"
                 ? render(vv, `${path}.${k}`, depth + 1)
-                : (() => {
-                    const t = vv === null ? "null" : typeof vv;
-                    const display = vv === null ? "null" : t === "string" ? `"${vv}"` : String(vv);
-                    return <span>{display} <span style={{opacity:.6}}>({t})</span></span>;
-                  })()}
+                : primitiveRender(vv)}
             </Row>
           </div>
         ))}
       </div>
     );
-  }
+  };
 
   return (
     <div style={{
-      fontFamily:"ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-      fontSize:14, lineHeight:1.5
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      fontSize: 14,
+      lineHeight: 1.5
     }}>
       {render(value, "$root", 0)}
     </div>
   );
-}
+};
