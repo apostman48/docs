@@ -1,4 +1,5 @@
-// /snippets/json-viewer.jsx
+"use client";
+
 import { useMemo, useState } from "react";
 
 const isObject = (v) => v && typeof v === "object";
@@ -51,17 +52,17 @@ export const JsonViewer = ({ data, json, collapsedAt = 1 }) => {
   const value = useMemo(() => {
     if (isObject(data)) return data;
     if (typeof json === "string") {
-      try {
-        return JSON.parse(json);
-      } catch {
-        return { error: "Invalid JSON string" };
-      }
+      try { return JSON.parse(json); } catch { return { error: "Invalid JSON string" }; }
     }
     return {};
   }, [data, json]);
 
   return (
-    <div style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: 14, lineHeight: 1.5 }}>
+    <div style={{
+      fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+      fontSize: 14,
+      lineHeight: 1.5
+    }}>
       <Node v={value} depth={0} defaultOpen={collapsedAt <= 0} />
     </div>
   );
