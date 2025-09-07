@@ -40,7 +40,7 @@ paths:
         Use this endpoint to get details about a specific listing.
 
 
-        When requesting a specific listing an expanded view of the listing is
+        When requesting a specific listsing an expanded view of the listing is
         provided which includes comparables as well as the MLS history for the
         specific property. This is useful for building single property views
         within your app or website.
