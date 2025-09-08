@@ -35,6 +35,7 @@
       },
       {
         "tab": "Samples",
+        "url": "samples",
         "groups": [
           {
             "group": "Getting started",
