@@ -55,10 +55,15 @@
       },
       {
       "tab": "API Refy",
+      "groups": [
+        {
+          "group": "Users",
           "openapi": {
             "source": "autogen/repliers.json",
             "directory": "autogen"
           }
+        }
+      ]
       }
     ],
     "global": {
