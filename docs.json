@@ -20,6 +20,25 @@
         "tab": "Guides",
         "groups": [
           {
+            "group": "React",
+            "pages": [
+              "ai-tools/cursor"
+            ]
+          },
+          {
+          "group": "Users",
+          "openapi": {
+            "source": "autogen/repliers.json",
+            "directory": "autogen"
+            }
+          }
+          
+        ]
+      },
+      {
+      "tab": "Samples",
+      "groups": [
+                  {
             "group": "Getting started",
             "pages": [
               "index",
@@ -42,27 +61,8 @@
               "essentials/images",
               "essentials/reusable-snippets"
             ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
           }
-        ]
-      },
-      {
-      "tab": "API Refy",
-      "groups": [
-        {
-          "group": "Users",
-          "openapi": {
-            "source": "autogen/repliers.json",
-            "directory": "autogen"
-          }
-        }
+
       ]
       }
     ],
