@@ -7,7 +7,6 @@
     "light": "#07C983",
     "dark": "#15803D"
   },
-
   "seo": {
     "metatags": {
       "robots": "noindex"
@@ -26,19 +25,18 @@
             ]
           },
           {
-          "group": "Users",
-          "openapi": {
-            "source": "autogen/repliers.json",
-            "directory": "autogen"
+            "group": "Users",
+            "openapi": {
+              "source": "autogen/repliers.json",
+              "directory": "autogen"
             }
           }
-          
         ]
       },
       {
-      "tab": "Samples",
-      "groups": [
-                  {
+        "tab": "Samples",
+        "groups": [
+          {
             "group": "Getting started",
             "pages": [
               "index",
@@ -62,8 +60,7 @@
               "essentials/reusable-snippets"
             ]
           }
-
-      ]
+        ]
       }
     ],
     "global": {
@@ -94,7 +91,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@minpjooijohoihtlify.com"
+        "href": "mailto:hi@mintlify.com"
       }
     ],
     "primary": {
@@ -105,21 +102,21 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mioiointlify",
-      "github": "https://github.com/mintiojoijlify",
-      "linkedin": "https://linkedin.com/company/minojoijohtlify"
+      "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
+      "linkedin": "https://linkedin.com/company/mintlify"
     }
   }
 }
