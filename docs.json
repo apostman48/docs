@@ -27,7 +27,8 @@
           {
             "group": "Repliers",
             "pages": [
-              "logic/403estimate"
+              "logic/403estimate",
+              "logic/aiestimates"
             ],
             "directory": "logic"
           },
