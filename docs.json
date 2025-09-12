@@ -22,7 +22,8 @@
             "group": "React",
             "pages": [
               "ai-tools/cursor"
-            ]
+            ]},
+          {
             "group": "Repliers",
             "pages": [
               "logic/403estimate"
