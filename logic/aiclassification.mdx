@@ -34,3 +34,60 @@ Classifications are included in the `imageInsights` object within your API respo
     }
 ]
 ```
+
+## Supported Classifications
+
+Our system currently identifies these room and area types:
+
+* Aerial View
+* Back of Structure
+* Balcony
+* Basement
+* Bathroom
+* Bedroom
+* Dining Room
+* Entrance Foyer
+* Exercise Room
+* Family Room
+* Floor Plan
+* Front of Structure
+* Game Room
+* Garage
+* Hallway
+* Kitchen
+* Laundry
+* Living Room
+* Lobby
+* Office
+* Other
+* Parking
+* Patio
+* Pool
+* Side of Structure
+* Stairs
+* View
+* Walk-In Closet(s)
+* Wine Cellar
+
+## Implementation Best Practices
+
+### Confidence Thresholds
+
+The `prediction` value indicates classification confidence. Consider these guidelines:
+
+* **High Confidence (0.95+)**: Very reliable classifications suitable for automatic labeling
+* **Good Confidence (0.90-0.94)**: Generally reliable, good for most use cases
+* **Lower Confidence (<0.90)**: Use with caution or exclude from automatic grouping
+
+**Recommendation**: Set a minimum threshold of 0.90 for displaying classifications to users.
+
+### User Experience Applications
+
+**Image Labeling**
+
+```
+// Display classification labels for high-confidence predictions
+if (image.classification.prediction >= 0.90) {
+    displayLabel(image.classification.imageOf);
+}
+```
