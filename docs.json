@@ -21,7 +21,8 @@
           {
             "group": "React",
             "pages": [
-              "ai-tools/cursor"
+              "ai-tools/cursor",
+              "logic/403estimates"
             ]
           },
           {
